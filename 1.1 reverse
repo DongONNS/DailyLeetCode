@@ -1,0 +1,50 @@
+public class Reverse {
+    public static void main(String[] args) {
+        int x=-5312;
+        int res = reverse(x);
+        System.out.println(res);
+    }
+
+     public static int reverse(int x){
+        int rev = 0;
+        while(x!=0){
+            int pop = x%10;
+            x/=10;
+            if(rev>Integer.MAX_VALUE/10||(rev==Integer.MAX_VALUE/10&&pop>7));
+            if(rev<Integer.MIN_VALUE/10||(rev==Integer.MIN_VALUE/10&&pop<-8));
+            rev= rev*10+pop;
+        }
+        return rev;
+    }
+
+
+自己瞎做的，没有考虑数据溢出的问题，而且代码很多冗余；
+//    public static int reverse(int x) {
+//        if (x >= 0) {
+//            String str = x + "";
+//            int[] arr = new int[str.length()];
+//            int num = 0;
+//            for (int i = 0; i < str.length(); i++, x /= 10) {
+//                arr[i] = x % 10;
+//            }
+//            double n = Math.pow(10, str.length() - 1);
+//            for (int i = 0; i < str.length(); i++, n /= 10) {
+//                num += arr[i] * n;
+//            }
+//            return num;
+//        } else {
+//            int y=-x;
+//            String str = y + "";
+//            int[] arr = new int[str.length()];
+//            int num = 0;
+//            for (int i = 0; i < str.length(); i++, y /= 10) {
+//                arr[i] = y % 10;
+//            }
+//            double n = Math.pow(10, str.length() - 1);
+//            for (int i = 0; i < str.length(); i++, n /= 10) {
+//                num += arr[i] * n;
+//            }
+//            return -num;
+//        }
+//    }
+}
