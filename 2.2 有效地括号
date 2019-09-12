@@ -1,0 +1,107 @@
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Stack;
+
+/*
+给定一个只包括 '('，')'，'{'，'}'，'['，']' 的字符串，判断字符串是否有效。
+
+        有效字符串需满足：
+
+        左括号必须用相同类型的右括号闭合。
+        左括号必须以正确的顺序闭合。
+        注意空字符串可被认为是有效字符串
+*/
+
+
+//自己错误的尝试
+/*
+解题思路：
+先遍历将字符串中的空格全部去掉，然后这里面是间存在对应关系，如果为奇数个直接排除
+再从第一个开始遍历，将遍历的元素与它的下一个进行比较，如果相等，那就将索引值+2继续遍历
+如果再遍历过程中存在不满足条件的直接返回错误；
+ */
+//
+//public class IsValid {
+//        public static void main(String[] args){
+//            String str = "() {}  [{]";
+//            boolean result = isValid(str);
+//            System.out.println(result);
+//        }
+//
+//        public static boolean isValid(String str){
+////          存储由str转换得到的字符
+//            char[] cha1 = str.toCharArray();
+////          存储去掉‘ ’后的字符
+//            char[] cha2 = new char[str.length()];
+//            int index=0;
+//
+////          去掉字符串中的空格
+//            for(int i=0;i<str.length();i++){
+//                while(cha1[i]==' '){
+//                    i++;
+//                }
+////              用cha2将去掉空格后的字符存起来
+//                cha2[index++]=cha1[i];
+//            }
+//
+////          统计有效字符的数量
+//            int length = 0;
+//            for (int k= 0;k<str.length();k++){
+//                if (cha2[k]=='('||cha2[k]==')'||cha2[k]=='{'||
+//                    cha2[k]=='}'||cha2[k]=='['||cha2[k]==']'){
+//                    length++;
+//                }
+//            }
+//            System.out.println(length);
+//            System.out.println(Arrays.toString(cha1));
+//            System.out.println(Arrays.toString(cha2));
+//
+////          进行空格是否配对的比较
+//            for(int j=0;j<length;j+=2){
+//                if ((cha2[j]=='('&&cha2[j+1]!=')')||
+//                    (cha2[j]=='['&&cha2[j+1]!=']')||
+//                    (cha2[j]=='{'&&cha2[j+1]!='}')){
+//                    return false;
+//                }
+//            }
+//            return true;
+//        }
+//}
+
+
+
+class Solution{
+//    用于处理映射的哈希表
+    private HashMap<Character,Character> mappings;
+    public Solution(){
+//      使用映射初始化hashmap，增强代码的阅读性。
+        this.mappings = new HashMap<Character,Character>();
+        this.mappings.put(')','(');
+        this.mappings.put('}','{');
+        this.mappings.put(']','[');
+    }
+    
+    //判断是否为括号有效的字符串
+    public boolean isValid(String s){
+    //创建一个栈用于存储该字符串
+        Stack<Character> stack = new Stack<Character>();
+        for (int i=0;i<s.length();i++){
+            char c = s.charAt(i);
+            //如果这个是哈希表中的闭括号，那么就将栈顶元素弹出
+            if (mappings.containsKey(c)){
+           //如果栈顶元素不存在，那就将栈顶元素设为虚拟值‘#’，存在的话弹出栈顶元素
+                char topElement = stack.empty()?'#':stack.pop();
+                //如果栈顶元素与比括号不匹配，返回错误
+                if (topElement!=mappings.get(c)){
+                    return false;
+                }
+            }else{
+            //如果不是闭括号，那就将这个栈顶元素押入栈中；
+                stack.push(c);
+            }
+        }
+        //如果最终栈元素为空，那说明字符串的符号符合规则
+        return stack.empty();
+    }
+}
