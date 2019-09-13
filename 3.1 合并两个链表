@@ -1,0 +1,44 @@
+/*
+将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+        示例：
+
+        输入：1->2->4, 1->3->4
+        输出：1->1->2->3->4->4
+
+*/
+//自定义一个ListNode类
+
+class ListNode{
+    int val;            //这个是链表的值；
+    ListNode next;      //下一个链表对象；
+    ListNode(int x){    //赋值链表的值；
+        val = x;
+    }
+}
+
+public class MergeTwoLists {
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+//          这个prehead是为了快速返回链表头部的；
+            ListNode prehead = new ListNode(-1);
+            
+            //prev用作链表的指针；
+            ListNode prev = prehead;
+            //当两个链表都不空的情况下，从头开始比较两个链表的元素大小，按顺序将链表进行排列；  
+            while (l1 != null && l2 != null) {
+                if (l1.val <= l2.val) {
+                    prev.next = l1;
+                    l1 = l1.next;
+                } else {
+                    prev.next = l2;
+                    l2 = l2.next;
+                }
+                //将指针向后移一位
+                prev = prev.next;
+            }
+            //此处的作用是当一个链表循环完了后如何处理或者是两个链表中有一个为空该如何处理；
+            prev.next = l1 == null ? l2 : l1;
+            //返回链表的第一个元素的索引；
+            return prehead.next;
+        }
+    }
