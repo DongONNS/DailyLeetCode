@@ -1,3 +1,75 @@
+//采用栈来获取应该交换位置的最左和最右元素
+方法 4：使用栈
+算法
+
+这个方法背后的想法仍然是选择排序。我们需要找到无序子数组中最小元素和最大元素分别对应的正确位置，来求得我们想要的无序子数组的边界。
+为了达到这一目的，此方法中，我们使用 栈栈 。我们从头遍历 numsnums 数组，如果遇到的数字大小一直是升序的，我们就不断把对应的下标压
+入栈中，这么做的目的是因为这些元素在目前都是处于正确的位置上。一旦我们遇到前面的数比后面的数大，也就是 nums[j]nums[j] 比栈顶元素
+小，我们可以知道 nums[j]nums[j] 一定不在正确的位置上。
+为了找到 nums[j]nums[j] 的正确位置，我们不断将栈顶元素弹出，直到栈顶元素比 nums[j]nums[j] 小，我们假设栈顶元素对应的下标为 kk ，
+那么我们知道 nums[j]nums[j] 的正确位置下标应该是 k + 1k+1 。
+我们重复这一过程并遍历完整个数组，这样我们可以找到最小的 kk， 它也是无序子数组的左边界。
+类似的，我们逆序遍历一遍 numsnums 数组来找到无序子数组的右边界。这一次我们将降序的元素压入栈中，如果遇到一个升序的元素，我们像上
+面所述的方法一样不断将栈顶元素弹出，直到找到一个更大的元素，以此找到无序子数组的右边界。
+我们可以看下图作为参考。我们观察到上升还是下降决定了相对顺序，我们还可以观察到指针 bb 在下标 0 后面标记着无序子数组的左边界，指针
+aa 在下标 7 前面标记着无序子数组的右边界。
+
+public class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        Stack<Integer> stack = new Stack<Integer>();
+        int l = nums.length;
+        int r = 0;
+        
+        for(int i=0;i<nums.length;i++){
+            while(!stack.isEmpty()&&nums[stack.peek()]>nums[i]){
+                l=Math.min(stack.pop(),l);
+            }
+            stack.push(i);
+        }
+        stack.clear();
+        for(int i=nums.length-1;i>=0;i--){
+            while(!stack.isEmpty()&&nums[stack.peek()]<nums[i]){
+                r=Math.max(stack.pop(),r);
+            }
+            stack.push(i);
+        }
+        return r-l>0?r-l+1:0;
+    }
+}
+
+
+
+
+//采用将数组进行排序，找到数组中应该交换顺序的最左边元素和最右边元素
+另一个简单的想法是：我们将数组 numsnums 进行排序，记为 nums\_sortednums_sorted 。然后我们比较 numsnums 和 nums\_sortednums_sorted 
+的元素来决定最左边和最右边不匹配的元素。它们之间的子数组就是要求的最短无序子数组。
+
+public class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int[] cnums = nums.clone();
+        Arrays.sort(cnums);
+        int start = nums.length;
+        int end = 0;
+        for(int i=0;i<nums.length;i++){
+            if(cnums[i]!=nums[i]){
+                start = Math.min(start,i);
+                end = Math.max(end,i);
+            }
+        }
+        return (end - start>=0?end-start+1:0);
+    }
+}
+
+
+//选择排序的思想，找到数组中应该进行交换顺序的最左边的元素和应该交换顺序的最右边的元素；
+在这种方法中，我们基于选择排序使用如下想法：我们遍历 numsnums 数组中的每一个元素 nums[i]nums[i] 。对于每一个元素，我们尝试找到它在
+正确顺序数组中的位置，即将它与每一个满足 i < j < ni<j<n 的 nums[j]nums[j] 做比较，这里 nn 是 numsnums 数组的长度。
+如果存在 nums[j]nums[j] 比 nums[i]nums[i] 小，这意味着 nums[i]nums[i] 和 nums[j]nums[j] 都不在排序后数组中的正确位置。因此我们需要
+交换这两个元素使它们到正确的位置上。但这里我们并不需要真的交换两个元素，我们只需要标记两个元素在原数组中的位置 ii 和 jj 。这两个元素
+标记着目前无序数组的边界。
+因此，在所有的 nums[i]nums[i] 中，我们找到最左边不在正确位置的 nums[i]nums[i] ，这标记了最短无序子数组的左边界（ll）。类似的，我们找
+到最右边不在正确位置的边界 nums[j]nums[j] ，它标记了最短无序子数组的右边界 (rr) 。
+
 public class Solution {
     public int findUnsortedSubarray(int[] nums) {
         int l = nums.length, r = 0;
