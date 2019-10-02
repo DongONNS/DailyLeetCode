@@ -1,0 +1,75 @@
+给定一个字符串 s 和一个非空字符串 p，找到 s 中所有是 p 的字母异位词的子串，返回这些子串的起始索引。
+字符串只包含小写英文字母，并且字符串 s 和 p 的长度都不超过 20100。
+
+说明：
+字母异位词指字母相同，但排列不同的字符串。
+不考虑答案输出的顺序。
+示例 1:
+
+输入:
+s: "cbaebabacd" p: "abc"
+输出:
+[0, 6]
+
+解释:
+起始索引等于 0 的子串是 "cba", 它是 "abc" 的字母异位词。
+起始索引等于 6 的子串是 "bac", 它是 "abc" 的字母异位词。
+ 示例 2:
+
+输入:
+s: "abab" p: "ab"
+输出:
+[0, 1, 2]
+
+解释:
+起始索引等于 0 的子串是 "ab", 它是 "ab" 的字母异位词。
+起始索引等于 1 的子串是 "ba", 它是 "ab" 的字母异位词。
+起始索引等于 2 的子串是 "ab", 它是 "ab" 的字母异位词。
+
+类似于寻找字符串子串的KMP算法
+
+我们从首到尾依次判断，每有一个成功匹配，则从备份p的stringbuilder内删去一个值，counter++
+
+！！ 若： 某字符未匹配成功，且该字符不在p串内，重置备份p的stringbuilder，重置counter，继续判断
+
+！！ 若： 某字符未匹配成功，但该字符在p串内，则将p.length长度内，第一位成功判断并删去的值重新恢复至stringbuilder内，重新判断这一位，counter--
+
+！！ 若： counter==p.length 判断成功，写入输出列表。并：将p.length长度内，第一位成功判断并删去的值重新恢复至stringbuilder内，counter--
+
+
+class Solution {
+    public List<Integer> findAnagrams(String s, String p) {
+        List<Integer> list = new ArrayList();
+        StringBuilder sb = new StringBuilder(p);
+        int slen = s.length();
+        int plen = p.length();
+        int count = 0;
+        for(int i=0;i<slen-plen;i++){
+            
+            //如果这个字符就在StringBuilder中，那么将这个字符删掉并且匹配长度+1
+            if(sb.indexOf(Character.toString(s.charAt(i)))!=-1){
+                count++;
+                sb.delete(sb.indexOf(Character.toString(s.charAt(i))),
+                          sb.indexOf(Character.toString(s.charAt(i)))+1);
+            }
+            else{
+                //如果字符串不在StringBuilder中了，但是属于模式字符串，那么将匹配倒退一步再进行匹配算法计算；
+                if(p.indexOf(Character.toString(s.charAt(i)))!=-1){
+                    count--;
+                    sb.append(s.subString(i-count+1,i));
+                }
+                //这个字符并没有出现在模式字符串中，那么重新进行匹配；
+                else{
+                    count = 0;
+                    i = i-plen+1;         
+                }
+            }   
+            if(count  = plen){
+                list.add(i-plen+1);
+                count = 0;
+                i=i-plen+1;
+            }  
+        }   
+        return list;
+    }
+}
