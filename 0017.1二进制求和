@@ -1,0 +1,147 @@
+给定两个二进制字符串，返回他们的和（用二进制表示）。
+
+输入为非空字符串且只包含数字 1 和 0。
+
+示例 1:
+
+输入: a = "11", b = "1"
+输出: "100"
+示例 2:
+
+输入: a = "1010", b = "1011"
+输出: "10101"
+
+首先自己尝试了将字符串转换为十进制，再将十进制数字相加后转化为二进制完成转换，这个方法可以实现绝大部分的测试用例，
+但是对于过长的字符串无法满足要求，解法如下：
+
+在解题过程中遇到了几个小问题：
+1.二进制转换为十进制时，没有注意到应该是按数组的倒序进行的，导致结果错误；
+2.还有那个指数的幂次此时与数组的索引不是相等的了，需要另外设置一个幂次的元素；
+3.String和StringBuilder是不能够直接进行相互转换的，可以用String str = sb+"";或者String str = sb.toString();
+
+另外的知识点补充，将十进制转换为二进制的方法；
+第一种：除基倒取余法
+这是最符合我们平时的数学逻辑思维的，即输入一个十进制数n，每次用n除以2，把余数记下来，再用商去除以2...依次循环，
+直到商为0结束，把余数倒着依次排列，就构成了转换后的二进制数。那么，在实际实现中，可以用int的一个数来存储最后的
+二进制，每次求余后把余数存储在int型数的低位，依次递增，具体代码实现如下：
+
+ 1   public void binaryToDecimal(int n){
+ 2       int t = 0;  //用来记录位数
+ 3       int bin = 0; //用来记录最后的二进制数
+ 4       int r = 0;  //用来存储余数
+ 5       while(n != 0){
+ 6           r = n % 2;
+ 7           n = n / 2;
+ 8           bin += r * Math().pow(10,t);
+ 9           t++; 
+10      }
+11          System.out.println(bin);
+12  }
+
+int型最大只能表示2^31-1 的正数，所以，存储的二进制数位数有限；我们都知道，int在java中的存储范围是32位，则可以
+使用字符串的拼接（+）来实现，代码如下:
+1  public void binaryToDecimal(int n){
+2      String str = "";
+3      while(n!=0){
+4          str = n%2+str;
+5          n = n/2;
+6      }
+7          System.out.println(str);
+8 }
+
+
+第二种：利用“移位”操作实现
+
+我们可以直接利用移位操作对一个十进制数进行移位操作，即：将最高位的数移至最低位（移31位），除过最低位其余位置清零，
+使用& 操作，可以使用和1相与（&），由于1在内存中除过最低位是1，其余31位都是零，然后把这个数按十进制输出；再移次高位，
+做相同的操作，直到最后一位 ，代码如下。可以说，这是我到目前为止见到的最简单的实现方式了。
+1 public void binaryToDecimal(int n){
+2      for(int i = 31;i >= 0; i--)
+3          System.out.print(n >>> i & 1);
+4 }
+说明：由于计算机中存储的都是数的补码，正数的原码、反码、补码都是相同的；而负数的原码、反码、补码是不一样的，补码=原
+码取反+1（符号位不变）。所以，负数是按照它的补码输出的。
+>>>为逻辑移位符，向右移n位，高位补0
+>> 算数移位符，也是向右移n位，不同的是：正数高位补0，负数高位补1
+<< 移位符，向左移n位，低位补0
+
+第三种：调用API函数
+
+这是处理问题更符合面向对象的一种方式：
+
+1 public void function1(int n){
+2      String result = Integer.toBinaryString(n);
+3      //int r = Integer.parseInt(result);
+4      //System.out.println(r);
+5      System.out.println(result);
+6  }
+
+class Solution {
+    public String addBinary(String a, String b) {
+        char[] aArr = a.toCharArray();
+        char[] bArr = b.toCharArray();
+        int asum = 0;
+        int bsum = 0;
+        int sum = 0;
+        int index = 0;
+        
+        //将字符串a转化成对应的十进制数字；
+        for(int i=aArr.length-1;i>=0;i--){
+            asum+=(aArr[i]-'0')*Math.pow(2,index++);
+        }
+        
+        index = 0;
+        //将字符串b转换成对应的十进制数字；
+        for(int i=bArr.length-1;i>=0;i--){
+            bsum+=(bArr[i]-'0')*Math.pow(2,index++);
+        }
+        
+        sum = asum+bsum;
+        if(sum==0){
+            return "0";
+        }
+        //将十进制数字转换成对应的二进制数字；
+        StringBuilder sb = new StringBuilder();
+        while(sum!=0){
+            int r = sum%2;
+            sum/=2;
+            sb.append(r);
+        }
+        String result =sb.reverse()+"";
+        return result;
+    }
+}
+
+然后又是学习了评论区里大佬们的解法：
+整体思路是将两个字符串较短的用 00 补齐，使得两个字符串长度一致，然后从末尾进行遍历计算，得到最终结果。
+
+本题解中大致思路与上述一致，但由于字符串操作原因，不确定最后的结果是否会多出一位进位，所以会有 2 种处理方式：
+
+第一种，在进行计算时直接拼接字符串，会得到一个反向字符，需要最后再进行翻转
+第二种，按照位置给结果字符赋值，最后如果有进位，则在前方进行字符串拼接添加进位
+时间复杂度：O(n)
+
+class Solution {
+    public String addBinary(String a, String b) {
+        StringBuilder sb  =  new StringBuilder();
+        int ca = 0;
+        for(int i=a.length()-1,j=b.length()-1;i>=0||j>=0;i--,j--){
+            int sum = ca;
+            sum+= i>=0?a.charAt(i)-'0':0;
+            sum+= j>=0?b.charAt(j)-'0':0;
+            sb.append(sum%2);
+            ca = sum/2;
+        }
+        sb.append(ca==1?ca:"");
+        return sb.reverse().toString();
+    }
+}
+
+
+
+
+
+
+
+
+
