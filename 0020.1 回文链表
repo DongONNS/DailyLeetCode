@@ -1,0 +1,63 @@
+请判断一个链表是否为回文链表。
+
+示例 1:
+
+输入: 1->2
+输出: false
+示例 2:
+
+输入: 1->2->2->1
+输出: true
+
+
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode(int x) { val = x; }
+ * }
+ */
+ 
+ 
+class Solution {
+    public boolean isPalindrome(ListNode head) {
+        //如果链表为空或者只有一个节点，那么返回true;
+        if(head==null||head.next==null){
+            return true;
+        } 
+        
+        //采用双指针法找到链表的中点
+        ListNode slow = head.next;
+        ListNode fast = head.next.next;
+        while(fast!=null&&fast.next!=null){
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        
+        //将链表的前半段进行反转
+        ListNode pre = null;
+        ListNode next = null;
+        while(head!=slow){
+            next = head.next;
+            head.next = pre;
+            pre = head;
+            head = next;
+        }
+        
+        //如果链表节点数量为奇数个则将最中间的那个节点跳过
+        if(fast!=null){
+            slow = slow.next;
+        }
+        
+        //将链表前半段与后半段进行比较
+        while(pre!=null){
+            if(pre.val!=slow.val){
+                return false;
+            }
+            pre = pre.next;
+            slow = slow.next;
+        }
+        return true;
+    }
+}
