@@ -12,34 +12,33 @@
 
 class Solution {
     public List<List<Integer>> generate(int numRows) {
+    //定义一个二位链表，注意右边的链表进行新建对象时候需要加上泛型的类型
         List<List<Integer>> triangle = new ArrayList<List<Integer>>();
-
-        // First base case; if user requests zero rows, they get zero rows.
         if (numRows == 0) {
+            //如果行数为0那么就直接返回空链表
             return triangle;
         }
-
-        // Second base case; first row is always [1].
+        //先写好链表的第一行，这也是后面的链表进行构建的基础；
         triangle.add(new ArrayList<>());
         triangle.get(0).add(1);
-
+        //依据第一行链表进行后面链表的构建
         for (int rowNum = 1; rowNum < numRows; rowNum++) {
+            //新建的链表，用于记录该行链表的数字；
             List<Integer> row = new ArrayList<>();
+            //上一行的链表，这是用于构建本行数据的基础；
             List<Integer> prevRow = triangle.get(rowNum-1);
 
-            // The first row element is always 1.
+            //每一行的第一个元素必定是1
             row.add(1);
 
-            // Each triangle element (other than the first and last of each row)
-            // is equal to the sum of the elements above-and-to-the-left and
-            // above-and-to-the-right.
+            //根据该行的数据等于上一行数据对应相同位置元素及后一位的和，得出该行元素的内容；
             for (int j = 1; j < rowNum; j++) {
                 row.add(prevRow.get(j-1) + prevRow.get(j));
             }
 
-            // The last row element is always 1.
+            //每一行元素的最后一位也是确定的为1；
             row.add(1);
-
+            //将该行添加进二维链表中；
             triangle.add(row);
         }
 
