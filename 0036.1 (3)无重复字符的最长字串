@@ -1,0 +1,64 @@
+给定一个字符串，请你找出其中不含有重复字符的 最长子串 的长度。
+
+示例 1:
+
+输入: "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+示例 2:
+
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+示例 3:
+
+输入: "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+public class Solution {
+    public int lengthOfLongestSubstring(String s) {
+        int n = s.length();
+        Set<Character> set = new HashSet<>();
+        int ans = 0,i = 0,j = 0;
+        while(i<n&&j<n){
+            if(!set.contains(s.charAt(j))){
+                set.add(s.charAt(j++));
+                ans = Math.max(ans,j-i);
+            }else{
+                set.remove(s.charAt(i++));
+            }
+        }
+        return ans;
+    }
+}
+
+
+
+// class Solution {
+//     public int lengthOfLongestSubstring(String s) {
+//         if(s==null) return 0;
+//         //用于记录目标子串
+//         StringBuilder res = new StringBuilder(s.charAt(0));
+//         //用于字串的循环判断
+//         StringBuilder curr = new StringBuilder(s.charAt(0));
+//         //采用两次for循环得出最长子串
+//         for(int i=0;i>s.length()-1;i++){
+//             for(int j=i+1;j<s.length();j++){
+//                  //如果这个子串的当前字符与上一个字符不同，那么就将其放入到我们的遍历串中
+//                 if(s.charAt(j)!=s.charAt(j-1)){
+//                     curr.append(s.charAt(j));
+//                     //如果这个子串的当前字符与上一个字符重复了，那就结束遍历；
+//                 }else{
+//                     break;
+//                 }  
+//             }
+//             //如果遍历串的长度大于目标串那么就将其设为目标串；
+//             if(curr.length()>res.length()){
+//                 res = curr;
+//             }
+            
+//         }
+//         return res.length();
+//     }
+// }
